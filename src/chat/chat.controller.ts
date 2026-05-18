@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  ForbiddenException,
   Get,
   Param,
   Post,
@@ -65,6 +67,30 @@ export class ChatController {
     return {
       message,
       response,
+    };
+  }
+
+  @Delete(':chatId')
+  async deleteChat(
+    @Req() req: any,
+    @Param('chatId') chatId: string,
+  ) {
+    const chat =
+      await this.chatService.findById(
+        chatId,
+      );
+
+    if (chat.userId !== req.user.id) {
+      throw new ForbiddenException(
+        'Acesso negado.',
+      );
+    }
+
+    await this.chatService.remove(chatId);
+
+    return {
+      message:
+        'Conversa removida com sucesso.',
     };
   }
 }

@@ -7,9 +7,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { DocumentsModule } from './documents/documents.module';
+import { SpeechtotextModule } from './speechtotext/speechtotext.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, AuthModule, ChatModule, DocumentsModule,],
+  imports: [UsersModule, PrismaModule, AuthModule, ChatModule, DocumentsModule, SpeechtotextModule,],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

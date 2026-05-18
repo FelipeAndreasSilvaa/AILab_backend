@@ -7,7 +7,7 @@ import { AiModule } from 'src/ai/ai.module';
 @Module({
   imports: [
     PrismaModule,
-    AiModule, // <-- Importa o módulo que fornece o AiService
+    AiModule,
   ],
   controllers: [DocumentsController],
   providers: [DocumentsService],
