@@ -8,9 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { DocumentsModule } from './documents/documents.module';
 import { SpeechtotextModule } from './speechtotext/speechtotext.module';
+import { OcrModule } from './ocr/ocr.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, AuthModule, ChatModule, DocumentsModule, SpeechtotextModule,],
+  imports: [UsersModule, PrismaModule, AuthModule, ChatModule, DocumentsModule, SpeechtotextModule, OcrModule,],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
