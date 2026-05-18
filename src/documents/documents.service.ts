@@ -37,10 +37,7 @@ export class DocumentsService {
       },
     });
 
-    return {
-      message: 'PDF enviado com sucesso.',
-      document,
-    };
+    return document
   }
 
   // Lista todos os documentos do usuário logado.
