@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+  BadRequestException,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { SpeechtotextService } from './speechtotext.service';
-import { CreateSpeechtotextDto } from './dto/create-speechtotext.dto';
-import { UpdateSpeechtotextDto } from './dto/update-speechtotext.dto';
 
-@Controller('speechtotext')
+const ALLOWED_MIMETYPES = [
+  'audio/mpeg',
+  'audio/mp4',
+  'audio/wav',
+  'audio/webm',
+  'audio/ogg',
+  'audio/flac',
+  'video/mp4',
+  'video/webm',
+];
+
+@Controller('speech')
 export class SpeechtotextController {
   constructor(private readonly speechtotextService: SpeechtotextService) {}
 
-  @Post()
-  create(@Body() createSpeechtotextDto: CreateSpeechtotextDto) {
-    return this.speechtotextService.create(createSpeechtotextDto);
-  }
+  @Post('transcribe')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: {
+        fileSize: 25 * 1024 * 1024, // 25 MB
+      },
+    }),
+  )
+  async transcribe(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo enviado.');
+    }
 
-  @Get()
-  findAll() {
-    return this.speechtotextService.findAll();
-  }
+    if (!ALLOWED_MIMETYPES.includes(file.mimetype)) {
+      throw new BadRequestException(
+        `Formato não suportado: ${file.mimetype}. Envie um arquivo de áudio ou vídeo válido.`,
+      );
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.speechtotextService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSpeechtotextDto: UpdateSpeechtotextDto) {
-    return this.speechtotextService.update(+id, updateSpeechtotextDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.speechtotextService.remove(+id);
+    const text = await this.speechtotextService.transcribe(file);
+    return { text };
   }
 }
